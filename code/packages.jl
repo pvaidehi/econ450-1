@@ -1,23 +1,25 @@
-# purpose: set up environment for the project
+# purpose: Set up the environment for the project
 
-# Load necessary packages
+# load necessary package manager
 using Pkg
 
-# List of packages to ensure they are installed
-packages = ["DataFrames", "Statistics", "CSV", "PrettyTables", "GLM", "MixedModels", "Polynomials", "LinearAlgebra", "Plots", "PlotlyJS", "DataFramesMeta", "FixedEffectModels"]
+# list of required packages
+packages = [
+    "DataFrames", "Statistics", "CSV", "PrettyTables", "GLM", "MixedModels", 
+    "Polynomials", "LinearAlgebra", "Plots", "PlotlyJS", "DataFramesMeta", 
+    "FixedEffectModels", "Zygote"
+]
 
-# Function to install missing packages
+# function to ensure all required packages are installed
 function ensure_packages(packages)
     for pkg in packages
-        if !(pkg in keys(Pkg.dependencies()))
+        if !haskey(Pkg.dependencies(), pkg)
             println("Installing package: $pkg")
             Pkg.add(pkg)
         end
     end
 end
 
-# Ensure all necessary packages are installed
 ensure_packages(packages)
-
-# Load the packages
-using DataFrames, Statistics, CSV, PrettyTables, GLM, MixedModels, Polynomials, LinearAlgebra, Plots, PlotlyJS, Optim, DataFramesMeta, FixedEffectModels
+using DataFrames, Statistics, CSV, PrettyTables, GLM, MixedModels, Polynomials, 
+      LinearAlgebra, Plots, PlotlyJS, DataFramesMeta, FixedEffectModels, Zygote
