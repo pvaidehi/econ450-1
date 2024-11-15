@@ -1,0 +1,157 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/vaidehiparameswaran/Desktop/second-year-coursework/econ450-
+> 1/psets/PS3/code/q2_part5.log
+  log type:  text
+ opened on:  15 Nov 2024, 11:08:12
+
+. 
+. use "../data/PS3_data.dta", clear
+
+. local industry = "X10"
+
+. keep if `industry' == 1
+(10,406 observations deleted)
+
+. 
+. // generate log variables
+. gen log_output =X03
+
+. gen log_capital = X40
+
+. gen log_labor = X43
+
+. gen log_int_consumption = X44
+
+. 
+. // xtabond
+. xtset firm_id year
+
+Panel variable: firm_id (unbalanced)
+ Time variable: year, 1990 to 1999, but with a gap
+         Delta: 1 unit
+
+. xtabond log_output log_capital log_labor log_int_consumption,  vce(robust) 
+
+Arellano–Bond dynamic panel-data estimation     Number of obs     =        607
+Group variable: firm_id                         Number of groups  =        155
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   3.916129
+                                                              max =          8
+
+Number of instruments =     40                  Wald chi2(4)      =     549.97
+                                                Prob > chi2       =     0.0000
+One-step results
+                                (Std. err. adjusted for clustering on firm_id)
+------------------------------------------------------------------------------
+             |               Robust
+  log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  log_output |
+         L1. |   .3279623   .0777371     4.22   0.000     .1756003    .4803243
+             |
+ log_capital |   .0717269   .0354435     2.02   0.043     .0022589    .1411949
+   log_labor |   .1570143   .1088732     1.44   0.149    -.0563733    .3704019
+log_int_co~n |   .6617109   .0692872     9.55   0.000     .5259105    .7975113
+       _cons |  -1.215395   .7904619    -1.54   0.124    -2.764672    .3338816
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        Standard: _cons
+
+. 
+. // xtdpdsys
+. xtdpdsys log_output log_capital log_labor log_int_consumption, vce(robust)
+
+System dynamic panel-data estimation            Number of obs     =        794
+Group variable: firm_id                         Number of groups  =        187
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   4.245989
+                                                              max =          9
+
+Number of instruments =     48                  Wald chi2(4)      =    1069.79
+                                                Prob > chi2       =     0.0000
+One-step results
+------------------------------------------------------------------------------
+             |               Robust
+  log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  log_output |
+         L1. |   .2790641   .0689012     4.05   0.000     .1440201     .414108
+             |
+ log_capital |    .023145   .0266657     0.87   0.385    -.0291187    .0754088
+   log_labor |   .0262751   .0806222     0.33   0.744    -.1317415    .1842918
+log_int_co~n |   .6729047   .0700559     9.61   0.000     .5355976    .8102118
+       _cons |   .6485769   .4410438     1.47   0.141    -.2158531    1.513007
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        GMM-type: LD.log_output
+        Standard: _cons
+
+. 
+. // opreg
+. opreg log_output log_capital log_labor log_int_consumption
+
+
+Olley-Pakes productivity estimator              Number of obs      =       794
+Group variable (i): firm_id                     Number of groups   =         .
+Time variable (t): year
+                                                Obs per group: min =         .
+                                                               avg =         .
+                                                               max =         .
+
+------------------------------------------------------------------------------
+             |               Robust
+  log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  log_output |
+         L1. |   .2790641   .0689012     4.05   0.000     .1440201     .414108
+             |
+ log_capital |    .023145   .0266657     0.87   0.385    -.0291187    .0754088
+   log_labor |   .0262751   .0806222     0.33   0.744    -.1317415    .1842918
+log_int_co~n |   .6729047   .0700559     9.61   0.000     .5355976    .8102118
+       _cons |   .6485769   .4410438     1.47   0.141    -.2158531    1.513007
+------------------------------------------------------------------------------
+State:         
+Free:          
+Control:       
+Proxy:         
+
+. 
+. // levpet
+. levpet log_output, free(log_labor) proxy(log_int_consumption) capital(log_cap
+> ital) valueadded reps(250)
+...............................................................................
+> .............................................................................
+> .............................................................................
+> .................
+
+
+Levinsohn-Petrin productivity estimator
+
+Dependent variable represents value added.      Number of obs      =       987
+Group variable (i): firm_id                     Number of groups   =       192
+Time variable (t): year
+                                                Obs per group: min =         1
+                                                               avg =       5.1
+                                                               max =        10
+
+------------------------------------------------------------------------------
+  log_output | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   log_labor |   .2765721   .0319427     8.66   0.000     .2139656    .3391786
+ log_capital |   .1579185   .1075234     1.47   0.142    -.0528234    .3686604
+------------------------------------------------------------------------------
+Wald test of constant returns to scale: Chi2 =  27.91 (p = 0.0000).
+
+. 
+end of do-file

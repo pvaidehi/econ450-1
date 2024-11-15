@@ -4,7 +4,7 @@
 using Pkg
 
 # List of packages to ensure they are installed
-packages = ["DataFrames", "Statistics", "CSV", "PrettyTables", "GLM", "MixedModels"]
+packages = ["DataFrames", "Statistics", "CSV", "PrettyTables", "GLM", "MixedModels", "Polynomials", "LinearAlgebra", "Plots", "PlotlyJS", "DataFramesMeta", "FixedEffectModels"]
 
 # Function to install missing packages
 function ensure_packages(packages)
@@ -20,4 +20,4 @@ end
 ensure_packages(packages)
 
 # Load the packages
-using DataFrames, Statistics, CSV, PrettyTables, GLM, MixedModels
+using DataFrames, Statistics, CSV, PrettyTables, GLM, MixedModels, Polynomials, LinearAlgebra, Plots, PlotlyJS, Optim, DataFramesMeta, FixedEffectModels

@@ -33,7 +33,7 @@ function generate_stats_and_tables(df, data, variable_names, suffix)
         backend = Val(:latex))
 
     # save to file
-    open("outputs/summary_stats_table_$suffix.tex", "w") do io
+    open("../outputs/summary_stats_table_$suffix.tex", "w") do io
         write(io, latex_table)
     end
 
@@ -45,7 +45,7 @@ function generate_stats_and_tables(df, data, variable_names, suffix)
     new_names = ["Ind $i" for i in 1:18]
     rename!(totals_by_year, names(totals_by_year)[2:end] .=> new_names)
     table = pretty_table(String, totals_by_year, backend = Val(:latex))
-    open("outputs/ind_year_counts_$suffix.tex", "w") do io
+    open("../outputs/ind_year_counts_$suffix.tex", "w") do io
         write(io, table)
     end
 
@@ -56,7 +56,7 @@ function generate_stats_and_tables(df, data, variable_names, suffix)
 
     zeroes = innerjoin(zero_investment, zero_labour, zero_materials, on = :year)
     table = pretty_table(String, zeroes, backend = Val(:latex))
-    open("outputs/zeroes_by_year_$suffix.tex", "w") do io
+    open("../outputs/zeroes_by_year_$suffix.tex", "w") do io
         write(io, table)
     end
 end

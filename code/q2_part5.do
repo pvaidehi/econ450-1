@@ -1,17 +1,18 @@
 // purpose: do xtabond, xtdpdsys, opreg, levpet in stata
-
+// things to do: export results, check that these use gross_output and not value added?
 clear
 set more off
+log using q2_part5.log, replace
 
-use PS3_data.dta, clear
+use "../data/PS3_data.dta", clear
 local industry = "X10"
 keep if `industry' == 1
 
 // generate log variables
-gen log_output = log(X03)
-gen log_capital = log(X40)
-gen log_labor = log(X43)
-gen log_int_consumption = log(X44)
+gen log_output =X03
+gen log_capital = X40
+gen log_labor = X43
+gen log_int_consumption = X44
 
 // xtabond
 xtset firm_id year
