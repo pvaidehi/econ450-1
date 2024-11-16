@@ -1,0 +1,570 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/vaidehiparameswaran/Desktop/second-year-coursework/econ450-1/psets/PS3/code/q2_part5.log
+  log type:  text
+ opened on:  15 Nov 2024, 14:43:53
+
+. 
+. use "../data/PS3_data.dta", clear
+
+. local industry = "X10"
+
+. keep if `industry' == 1
+(10,406 observations deleted)
+
+. 
+. // generate variables
+/ is not a valid command name
+r(199);
+
+. gen log_output = X03
+
+. gen log_capital = X40
+
+. gen log_labor = X43
+
+. gen log_int_consumption = X44
+
+. 
+. desc
+
+Contains data from ../data/PS3_data.dta
+ Observations:           987                  
+    Variables:            67                  16 Jan 2017 11:54
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+year            int     %10.0g                X01
+firm_id         float   %9.0g                 group(firm_id)
+obs             byte    %10.0g                X02
+X03             double  %10.0g                X03
+X04             byte    %10.0g                X04
+X05             byte    %10.0g                X05
+X06             byte    %10.0g                X06
+X07             byte    %10.0g                X07
+X08             byte    %10.0g                X08
+X09             byte    %10.0g                X09
+X10             byte    %10.0g                X10
+X11             byte    %10.0g                X11
+X12             byte    %10.0g                X12
+X13             byte    %10.0g                X13
+X14             byte    %10.0g                X14
+X15             byte    %10.0g                X15
+X16             byte    %10.0g                X16
+X17             byte    %10.0g                X17
+X18             byte    %10.0g                X18
+X19             byte    %10.0g                X19
+X20             byte    %10.0g                X20
+X21             byte    %10.0g                X21
+X22             byte    %10.0g                X22
+X23             byte    %10.0g                X23
+X24             byte    %10.0g                X24
+X25             byte    %10.0g                X25
+X26             byte    %10.0g                X26
+X27             byte    %10.0g                X27
+X28             byte    %10.0g                X28
+X29             byte    %10.0g                X29
+X30             byte    %10.0g                X30
+X31             byte    %10.0g                X31
+X32             byte    %10.0g                X32
+X33             byte    %10.0g                X33
+X34             byte    %10.0g                X34
+X35             byte    %10.0g                X35
+X36             double  %10.0g                X36
+X37             byte    %10.0g                X37
+X38             byte    %10.0g                X38
+X39             double  %10.0g                X39
+X40             double  %10.0g                X40
+X41             double  %10.0g                X41
+X42             double  %10.0g                X42
+X43             double  %10.0g                X43
+X44             double  %10.0g                X44
+X45             double  %10.0g                X45
+X46             double  %10.0g                X46
+X47             byte    %10.0g                X47
+X48             double  %10.0g                X48
+X49             double  %10.0g                X49
+X50             double  %10.0g                X50
+X51             double  %10.0g                X51
+X52             double  %10.0g                X52
+X53             double  %10.0g                X53
+X54             byte    %10.0g                X54
+X55             double  %10.0g                X55
+X56             byte    %10.0g                X56
+X57             byte    %10.0g                X57
+X58             byte    %10.0g                X58
+X59             byte    %10.0g                X59
+X60             byte    %10.0g                X60
+X61             byte    %10.0g                X61
+sequence        byte    %8.0g                 
+log_output      float   %9.0g                 
+log_capital     float   %9.0g                 
+log_labor       float   %9.0g                 
+log_int_consu~n float   %9.0g                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: firm_id  year
+     Note: Dataset has changed since last saved.
+
+. gen log_price = X45
+
+. gen log_int_price = X49
+
+. gen log_va_output = log(exp(log_output + log_price) - exp(log_int_consumption + log_int_price)) 
+
+. 
+. 
+. use "../data/PS3_data.dta", clear
+
+. local industry = "X10"
+
+. keep if `industry' == 1
+(10,406 observations deleted)
+
+. 
+. // generate variables
+/ is not a valid command name
+r(199);
+
+. gen log_output = X03
+
+. gen log_capital = X40
+
+. gen log_labor = X43
+
+. gen log_int_consumption = X44
+
+. gen log_price = X45
+
+. gen log_int_price = X49
+
+. gen exit_dummy = X61
+
+. 
+. label var log_output "log of gross output"
+
+. label var log_capital "log of capital"
+
+. label var log_labor "log of labor"
+
+. label var log_int_consumption "log of materials"
+
+. label var exitor "exit dummy"
+variable exitor not found
+r(111);
+
+. label var log_price "log of price"
+
+. label var log_int_price "log of materials price"
+
+. 
+. // xtabond
+/ is not a valid command name
+r(199);
+
+. xtset firm_id year
+
+Panel variable: firm_id (unbalanced)
+ Time variable: year, 1990 to 1999, but with a gap
+         Delta: 1 unit
+
+. xtabond log_output log_capital log_labor log_int_consumption,  vce(robust) 
+
+Arellano–Bond dynamic panel-data estimation     Number of obs     =        607
+Group variable: firm_id                         Number of groups  =        155
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   3.916129
+                                                              max =          8
+
+Number of instruments =     40                  Wald chi2(4)      =     549.97
+                                                Prob > chi2       =     0.0000
+One-step results
+                                       (Std. err. adjusted for clustering on firm_id)
+-------------------------------------------------------------------------------------
+                    |               Robust
+         log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+         log_output |
+                L1. |   .3279623   .0777371     4.22   0.000     .1756003    .4803243
+                    |
+        log_capital |   .0717269   .0354435     2.02   0.043     .0022589    .1411949
+          log_labor |   .1570143   .1088732     1.44   0.149    -.0563733    .3704019
+log_int_consumption |   .6617109   .0692872     9.55   0.000     .5259105    .7975113
+              _cons |  -1.215395   .7904619    -1.54   0.124    -2.764672    .3338816
+-------------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        Standard: _cons
+
+. eststo AB
+
+. 
+. // xtdpdsys
+/ is not a valid command name
+r(199);
+
+. xtdpdsys log_output log_capital log_labor log_int_consumption, vce(robust)
+
+System dynamic panel-data estimation            Number of obs     =        794
+Group variable: firm_id                         Number of groups  =        187
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   4.245989
+                                                              max =          9
+
+Number of instruments =     48                  Wald chi2(4)      =    1069.79
+                                                Prob > chi2       =     0.0000
+One-step results
+-------------------------------------------------------------------------------------
+                    |               Robust
+         log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+         log_output |
+                L1. |   .2790641   .0689012     4.05   0.000     .1440201     .414108
+                    |
+        log_capital |    .023145   .0266657     0.87   0.385    -.0291187    .0754088
+          log_labor |   .0262751   .0806222     0.33   0.744    -.1317415    .1842918
+log_int_consumption |   .6729047   .0700559     9.61   0.000     .5355976    .8102118
+              _cons |   .6485769   .4410438     1.47   0.141    -.2158531    1.513007
+-------------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        GMM-type: LD.log_output
+        Standard: _cons
+
+. eststo BB
+
+. 
+. // opreg - get value added output
+/ is not a valid command name
+r(199);
+
+. gen log_va_output = log(exp(log_output + log_price) - exp(log_int_consumption + log_int_price)) 
+
+. label var log_va_output "log of value added output"
+
+. opreg log_va_output log_capital log_labor log_int_consumption, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100)
+> ) second
+variable log_investment not found
+(error in option proxy())
+r(111);
+
+. eststo OP
+
+. // purpose: do xtabond, xtdpdsys, opreg, levpet in stata
+/ is not a valid command name
+r(199);
+
+. // things to do: export results, check that these use gross_output and not value added?
+/ is not a valid command name
+r(199);
+
+. 
+. clear
+
+. set more off
+
+. version 18
+
+. log using q2_part5.log, replace
+log file already open
+r(604);
+
+. 
+. use "../data/PS3_data.dta", clear
+
+. local industry = "X10"
+
+. keep if `industry' == 1
+(10,406 observations deleted)
+
+. 
+. // generate variables
+/ is not a valid command name
+r(199);
+
+. gen log_output = X03
+
+. gen log_capital = X40
+
+. gen log_labor = X43
+
+. gen log_int_consumption = X44
+
+. gen log_price = X45
+
+. gen log_int_price = X49
+
+. gen exit_dummy = X61
+
+. gen log_investment = X39
+
+. 
+. label var log_output "log of gross output"
+
+. label var log_capital "log of capital"
+
+. label var log_labor "log of labor"
+
+. label var log_int_consumption "log of materials"
+
+. label var exit_dummy "exit dummy"
+
+. label var log_price "log of price"
+
+. label var log_int_price "log of materials price"
+
+. label var log_investment "log of investment"
+
+. 
+. // xtabond
+/ is not a valid command name
+r(199);
+
+. xtset firm_id year
+
+Panel variable: firm_id (unbalanced)
+ Time variable: year, 1990 to 1999, but with a gap
+         Delta: 1 unit
+
+. xtabond log_output log_capital log_labor log_int_consumption,  vce(robust) 
+
+Arellano–Bond dynamic panel-data estimation     Number of obs     =        607
+Group variable: firm_id                         Number of groups  =        155
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   3.916129
+                                                              max =          8
+
+Number of instruments =     40                  Wald chi2(4)      =     549.97
+                                                Prob > chi2       =     0.0000
+One-step results
+                                       (Std. err. adjusted for clustering on firm_id)
+-------------------------------------------------------------------------------------
+                    |               Robust
+         log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+         log_output |
+                L1. |   .3279623   .0777371     4.22   0.000     .1756003    .4803243
+                    |
+        log_capital |   .0717269   .0354435     2.02   0.043     .0022589    .1411949
+          log_labor |   .1570143   .1088732     1.44   0.149    -.0563733    .3704019
+log_int_consumption |   .6617109   .0692872     9.55   0.000     .5259105    .7975113
+              _cons |  -1.215395   .7904619    -1.54   0.124    -2.764672    .3338816
+-------------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        Standard: _cons
+
+. eststo AB
+
+. 
+. // xtdpdsys
+/ is not a valid command name
+r(199);
+
+. xtdpdsys log_output log_capital log_labor log_int_consumption, vce(robust)
+
+System dynamic panel-data estimation            Number of obs     =        794
+Group variable: firm_id                         Number of groups  =        187
+Time variable: year
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =   4.245989
+                                                              max =          9
+
+Number of instruments =     48                  Wald chi2(4)      =    1069.79
+                                                Prob > chi2       =     0.0000
+One-step results
+-------------------------------------------------------------------------------------
+                    |               Robust
+         log_output | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+         log_output |
+                L1. |   .2790641   .0689012     4.05   0.000     .1440201     .414108
+                    |
+        log_capital |    .023145   .0266657     0.87   0.385    -.0291187    .0754088
+          log_labor |   .0262751   .0806222     0.33   0.744    -.1317415    .1842918
+log_int_consumption |   .6729047   .0700559     9.61   0.000     .5355976    .8102118
+              _cons |   .6485769   .4410438     1.47   0.141    -.2158531    1.513007
+-------------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).log_output
+        Standard: D.log_capital D.log_labor D.log_int_consumption
+Instruments for level equation
+        GMM-type: LD.log_output
+        Standard: _cons
+
+. eststo BB
+
+. 
+. // opreg - get value added output
+/ is not a valid command name
+r(199);
+
+. gen log_va_output = log(exp(log_output + log_price) - exp(log_int_consumption + log_int_price)) 
+
+. label var log_va_output "log of value added output"
+
+. opreg log_va_output log_capital log_labor log_int_consumption, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100)
+> ) second
+(running opreg on estimation sample)
+too many variables specified
+an error occurred when bootstrap executed opreg
+r(103);
+
+. eststo OP
+last estimation results not found, nothing to store
+r(301);
+
+. 
+. // levpet
+/ is not a valid command name
+r(199);
+
+. levpet log_output, free(log_labor) proxy(log_int_consumption) capital(log_capital) valueadded reps(250) i(firm_id)
+....................................................................................................................................--Break--
+r(1);
+
+. eststo LP 
+
+. 
+. // export
+/ is not a valid command name
+r(199);
+
+. esttab AB BB OP LP using "../outputs/prod_est.tex", replace mtitle("AB" "BB" "OP" "LP") /// 
+option / not allowed
+r(198);
+
+.     b(3) se(3) label starlevels(* 0.10 ** 0.05 *** 0.01)
+command b is unrecognized
+r(199);
+
+. 
+. opreg log_va_output, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100)) second
+(running opreg on estimation sample)
+variable log_labour not found
+(error in option free())
+an error occurred when bootstrap executed opreg
+r(111);
+
+. 
+. 
+
+. clear
+
+. set more off
+
+. version 18
+
+. log using q2_part5.log, replace
+log file already open
+r(604);
+
+. 
+. use "../data/PS3_data.dta", clear
+
+. local industry = "X10"
+
+. keep if `industry' == 1
+(10,406 observations deleted)
+
+. 
+. // generate variables
+/ is not a valid command name
+r(199);
+
+. gen log_output = X03
+
+. gen log_capital = X40
+
+. gen log_labour = X43
+
+. gen log_int_consumption = X44
+
+. gen log_price = X45
+
+. gen log_int_price = X49
+
+. gen exit_dummy = X61
+
+. gen log_investment = X39
+
+. 
+. label var log_output "log of gross output"
+
+. label var log_capital "log of capital"
+
+. label var log_labour "log of labour"
+
+. label var log_int_consumption "log of materials"
+
+. label var exit_dummy "exit dummy"
+
+. label var log_price "log of price"
+
+. label var log_int_price "log of materials price"
+
+. label var log_investment "log of investment"
+
+. 
+. gen log_va_output = log(exp(log_output + log_price) - exp(log_int_consumption + log_int_price)) 
+
+. label var log_va_output "log of value added output"
+
+. opreg log_va_output, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100)) second
+must specify panelvar; use xtset
+r(459);
+
+. 
+. xtset firm_id year
+
+Panel variable: firm_id (unbalanced)
+ Time variable: year, 1990 to 1999, but with a gap
+         Delta: 1 unit
+
+. 
+. opreg log_va_output, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100)) second
+(running opreg on estimation sample)
+option second not allowed
+an error occurred when bootstrap executed opreg
+r(198);
+
+. opreg log_va_output, exit(exit_dummy) state(log_capital) proxy(log_investment) free(log_labour) vce(bootstrap, reps(100))
+(running opreg on estimation sample)
+
+Bootstrap replications (100): .........10.........20.........30.........40.........50.........60.........70.........80.........90.........100 done
+
+
+Olley-Pakes productivity estimator              Number of obs      =       987
+Group variable (i): firm_id                     Number of groups   =       192
+Time variable (t): year
+                                                Obs per group: min =         1
+                                                               avg =       5.1
+                                                               max =        10
+
+                                             (Replications based on 192 clusters in firm_id)
+--------------------------------------------------------------------------------------------
+                           |   Observed   Bootstrap                         Normal-based
+                           | coefficient  std. err.      z    P>|z|     [95% conf. interval]
+---------------------------+----------------------------------------------------------------
+log_va_output              |
+               log_capital |   .1079398   .0685755     1.57   0.115    -.0264656    .2423452
+                log_labour |   .8918165   .0522946    17.05   0.000     .7893208    .9943121
+--------------------------------------------------------------------------------------------
+State:         log_capital
+Free:          log_labour
+Control:       
+Proxy:         log_investment
+
