@@ -5,21 +5,6 @@
 
 using Zygote 
 
-function poly(x::Symbol, y::Symbol, z::Symbol, data::DataFrame; degree::Int)
-    poly_data = DataFrame()
-    poly_data[!, x] = data[!, x]
-    poly_data[!, y] = data[!, y]
-    poly_data[!, z] = data[!, z]
-    # Add each polynomial term to the new DataFrame
-    for (i, j, k) in Iterators.product(0:degree, 0:degree, 0:degree)
-        if i + j + k <= degree && (i > 0 || j > 0 || k > 0)
-            term_name = Symbol("term_$(i)_$(j)_$(k)")
-            poly_data[!, term_name] = data[!, x].^i .* data[!, y].^j .* data[!, z].^k
-        end
-    end
-    return poly_data
-end
-
 function ACF_firststage(data::DataFrame, degree::Int)
     poly_data = poly(:m, :k, :l, data, degree = degree) 
     ACF_df = hcat(select(data, [:va_y, :id]), select(poly_data, Not([:term_0_0_1, :term_0_1_0, :term_1_0_0])))
