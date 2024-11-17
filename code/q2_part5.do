@@ -3,6 +3,7 @@
 
 clear
 set more off
+cap cd "code"
 version 18
 log using q2_part5.log, replace
 
@@ -31,11 +32,11 @@ label var log_investment "log of investment"
 
 // xtabond
 xtset firm_id year
-xtabond log_output log_capital log_labor log_int_consumption,  vce(robust) 
+xtabond log_output log_capital log_labour log_int_consumption,  vce(robust) 
 eststo AB
 
 // xtdpdsys
-xtdpdsys log_output log_capital log_labor log_int_consumption, vce(robust)
+xtdpdsys log_output log_capital log_labour log_int_consumption, vce(robust)
 eststo BB
 
 // opreg - get value added output
@@ -45,7 +46,7 @@ opreg log_va_output, exit(exit_dummy) state(log_capital) proxy(log_investment) f
 eststo OP
 
 // levpet
-levpet log_output, free(log_labor) proxy(log_int_consumption) capital(log_capital) valueadded reps(250) i(firm_id)
+levpet log_output, free(log_labour) proxy(log_int_consumption) capital(log_capital) valueadded reps(250) i(firm_id)
 eststo LP 
 
 // export

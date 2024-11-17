@@ -1,4 +1,7 @@
 # purpose: question 2 of problem set 3 in econ 450-1
+# author: vaidehi 
+# last updated: 11/16/2024
+
 include("packages.jl")
 include("summ_stats.jl")
 include("std_models.jl")
@@ -26,6 +29,8 @@ df[!,:ind7] = raw_data."X10";
 va_y = log(exp.(df[!, :y] .+ df[!, :p]) .- exp.(df[!, :m] .+ df[!, :wm]));
 va_y = ifelse.(va_y .< 0, missing, va_y);
 df[!, :va_y] = log.(va_y);
+m_share = df[!, :m] .+ df[!, :wm] - (df[!, :y] .+ df[!, :p]);
+df[!, :m_share] = m_share;
 
 data = hcat(df[!, :y], df[!, :i], df[!, :k], df[!, :l], df[!, :m]);
 vars = [df.y, df.i, df.k, df.l, df.m];
@@ -63,3 +68,7 @@ run_std_models(df_industry7, "_unbalanced")
 run(`stata-se -b do q2_part5.do`)
 
 ## ACF
+include("acf.jl")
+
+## GNR
+include("gnr.jl")

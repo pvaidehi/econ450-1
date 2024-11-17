@@ -1,10 +1,5 @@
 
-# generate polynomial terms, up to desired order
-# OLS estimate; predicted values are Phi! 
-# return data set with Phi values
-
-using Zygote 
-
+include("misc.jl")
 function ACF_firststage(data::DataFrame, degree::Int)
     poly_data = poly(:m, :k, :l, data, degree = degree) 
     ACF_df = hcat(select(data, [:va_y, :id]), select(poly_data, Not([:term_0_0_1, :term_0_1_0, :term_1_0_0])))
@@ -35,8 +30,8 @@ end
 ACF_df = ACF_firststage(df_industry7, 2)
 
 ## ACF objective function
-function compute_moments(init_params::Vector{Float64}, ϕ_hat::Vector{Float64}, k::Vector{Float64}, l::Vector{Float64}, 
-    ϕ_hat_lag::Vector{Float64}, k_lag::Vector{Float64}, l_lag::Vector{Float64})
+function compute_moments(init_params::Vector{Float64}, ϕ_hat_vec::Vector{Float64}, k_vec::Vector{Float64}, l_vec::Vector{Float64}, 
+    ϕ_hat_lag_vec::Vector{Float64}, k_lag_vec::Vector{Float64}, l_lag_vec::Vector{Float64})
     """
     Computes objective function for ACF second stage
 
@@ -52,8 +47,8 @@ function compute_moments(init_params::Vector{Float64}, ϕ_hat::Vector{Float64}, 
     β_k, β_l = init_params
 
     # Calculate residuals
-    ω = ϕ_hat .- β_k .* k .- β_l .* l
-    ω_lag = ϕ_hat_lag .- β_k .* k_lag .- β_l .* l_lag
+    ω = ϕ_hat .- β_k .* k_vec .- β_l_vec .* l
+    ω_lag = ϕ_hat_lag_vec .- β_k .* k_lag_vec .- β_l .* l_lag_vec
 
     # Create squared and cubed lagged residuals
     ω_lag_sq = ω_lag .^ 2
@@ -70,7 +65,7 @@ function compute_moments(init_params::Vector{Float64}, ϕ_hat::Vector{Float64}, 
 
     # Define instruments and calculate moments
     # Here, we use the arrays `k` and `l_lag` as instruments
-    moments = [sum(z .* ξ) / length(z) for z in (k, l_lag)]  # Alternative to mean
+    moments = [sum(z .* ξ) / length(z) for z in (k_vec, l_lag_vec)]  # Alternative to mean
 
     # Instead of matrix multiplication, calculate the scalar of moments
     return sum(moments .^ 2)  # This will give a scalar value
@@ -105,9 +100,9 @@ fig = Plots.plot(X, Y, Z, st=:surface, xlabel="β_k", ylabel="β_l", zlabel="Obj
 display(fig)
 
 # auto gradient with zygote
-function compute_gradient_with_zygote!(arg_vals::Vector{Float64}, ϕ_hat::Vector{Float64}, k::Vector{Float64}, l::Vector{Float64}, 
-    ϕ_hat_lag::Vector{Float64}, k_lag::Vector{Float64}, l_lag::Vector{Float64})
-    grad_fn = (params) -> compute_moments(params, ϕ_hat, k, l, ϕ_hat_lag, k_lag, l_lag)
+function compute_gradient_with_zygote!(arg_vals::Vector{Float64}, ϕ_hat_vec::Vector{Float64}, k_vec::Vector{Float64}, l_vec::Vector{Float64}, 
+    ϕ_hat_lag_vec::Vector{Float64}, k_lag_vec::Vector{Float64}, l_lag_vec::Vector{Float64})
+    grad_fn = (params) -> compute_moments(params, ϕ_hat_vec, k_vec, l_vec, ϕ_hat_lag_vec, k_lag_vec, l_lag_vec)
     grad = Zygote.gradient(grad_fn, arg_vals)
     return grad
 end
@@ -166,3 +161,37 @@ end
 
 # print the best parameters and corresponding objective value
 println("Best parameters by grid search (β_k, β_l): ", best_params)
+
+
+# wrapper function
+function ACF_estimation(data)
+    ACF_df = ACF_firststage(data, 2);
+    ϕ_hat = ACF_df.ϕ_hat
+    k = ACF_df.k
+    l = ACF_df.l
+    ϕ_hat_lag = ACF_df.ϕ_hat_lag
+    k_lag = ACF_df.k_lag
+    l_lag = ACF_df.l_lag
+    function f(params)
+        return compute_moments(params, ϕ_hat, k, l, ϕ_hat_lag, k_lag, l_lag)
+    end
+    
+    ## define the gradient function `g!`
+    function g!(params::Array, storage::Array) 
+        storage[:] = compute_gradient_with_zygote!(params, ϕ_hat, k, l, ϕ_hat_lag, k_lag, l_lag)[1]
+    end
+    result_NM = optimize(f, g!, params, NelderMead());
+    β_k_NM, β_l_NM = Optim.minimizer(result_NM)
+    return β_k_NM, β_l_NM
+end
+
+# with standard errors
+ACF_bs = bstrap(df_industry7, ACF_estimation, 5);
+β_k_array = [t[1] for t in ACF_bs];
+β_l_array = [t[2] for t in ACF_bs];
+β_k_se = std(β_k_array)/ sqrt(length(β_k_array));
+β_l_se = std(β_l_array)/ sqrt(length(β_l_array));
+
+println("β_k standard error: ", β_k_se)
+println("β_l standard error: ", β_l_se)
+
