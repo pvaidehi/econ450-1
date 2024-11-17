@@ -7,7 +7,7 @@ using Pkg
 packages = [
     "DataFrames", "Statistics", "CSV", "PrettyTables", "GLM", "MixedModels", 
     "Polynomials", "LinearAlgebra", "Plots", "PlotlyJS", "DataFramesMeta", 
-    "FixedEffectModels", "Zygote"
+    "FixedEffectModels", "Zygote", "Distributions"
 ]
 
 # function to ensure all required packages are installed
@@ -22,4 +22,5 @@ end
 
 ensure_packages(packages)
 using DataFrames, Statistics, CSV, PrettyTables, GLM, MixedModels, Polynomials, 
-      LinearAlgebra, Plots, PlotlyJS, DataFramesMeta, FixedEffectModels, Zygote
+      LinearAlgebra, Plots, PlotlyJS, DataFramesMeta, FixedEffectModels, Zygote,
+        Distributions

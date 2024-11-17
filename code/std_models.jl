@@ -15,11 +15,11 @@ function run_std_models(data, suffix)
     ## First Differences
     println("3. First Differences Model:")
     df_differenced = DataFrame(id = data.id[2:end],
-                            Δy = diff(data.y),
-                            Δk = diff(data.k),
-                            Δl = diff(data.l),
-                            Δm = diff(data.m),
-                            Δyear = diff(data.year))
+                            Δy = Base.diff(data.y),
+                            Δk = Base.diff(data.k),
+                            Δl = Base.diff(data.l),
+                            Δm = Base.diff(data.m),
+                            Δyear = Base.diff(data.year))
     dropmissing!(df_differenced)
     model_fd = lm(@formula(Δy ~ Δk + Δl + Δm), df_differenced)
     println(model_fd, "\n")
@@ -31,7 +31,7 @@ function run_std_models(data, suffix)
         :Δk_5y = :k .- lag(:k, 5),
         :Δl_5y = :l .- lag(:l, 5),
         :Δm_5y = :m .- lag(:m, 5),
-        :Δyear_5y = :year .- lag(:year, 5)  # This helps to confirm year gaps
+        :Δyear_5y = :year .- lag(:year, 5)
     )
     model_ld = lm(@formula(Δy_5y ~ Δk_5y + Δl_5y + Δm_5y), df_long_diff)
     println(model_ld, "\n")
@@ -41,7 +41,23 @@ function run_std_models(data, suffix)
     model_re = fit!(LinearMixedModel(@formula(y ~ k + l + m + (1 | id)), data))
     println(model_re, "\n")
 
-    ## Note: Hausman Test implementation can go here if needed
+    # Extract coefficients
+    b_fe = coef(model_fe)
+    b_re = coef(model_re)[2:end]
+
+    # Compute covariance matrices
+    v_fe = vcov(model_fe)
+    v_re = vcov(model_re)[2:end, 2:end]
+
+    # Hausman Test Statistic
+    Δ = b_fe - b_re
+    h_stat = dot(Δ, inv(v_fe - v_re) * Δ)
+
+    # p-value
+    p_value = 1 - cdf(Chisq(length(Δ)), h_stat)
+
+    println("Hausman Test Statistic: $h_stat")
+    println("p-value: $p_value")
 
     println("All models processed successfully.\n")
 
@@ -51,6 +67,8 @@ function run_std_models(data, suffix)
         "FE" => model_fe,
         "FD" => model_fd,
         "LD" => model_ld,
-        "RE" => model_re
+        "RE" => model_re,
+        "Hausman" => h_stat,
+        "p_value" => p_value
     )
 end

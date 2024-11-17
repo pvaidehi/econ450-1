@@ -3,7 +3,7 @@
        log:  /Users/vaidehiparameswaran/Desktop/second-year-coursework/econ450-
 > 1/psets/PS3/code/q2_part5.log
   log type:  text
- opened on:  16 Nov 2024, 23:21:08
+ opened on:  17 Nov 2024, 00:40:30
 
 . 
 . use "../data/PS3_data.dta", clear
@@ -162,7 +162,8 @@ Free:          log_labour
 Control:       
 Proxy:         log_investment
 
-. //eststo OP
+. eststo OP
+
 . 
 . // levpet
 . levpet log_output, free(log_labour) proxy(log_int_consumption) capital(log_ca
@@ -197,8 +198,13 @@ Wald test of constant returns to scale: Chi2 =  31.92 (p = 0.0000).
 . esttab AB BB OP LP using "../outputs/prod_est.tex", replace mtitle("AB" "BB" 
 > "OP" "LP") /// 
 >     b(3) se(3) label starlevels(* 0.10 ** 0.05 *** 0.01)
-estimation result OP not found
-r(111);
+(output written to ../outputs/prod_est.tex)
 
-end of do-file
-r(111);
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/vaidehiparameswaran/Desktop/second-year-coursework/econ450-
+> 1/psets/PS3/code/q2_part5.log
+  log type:  text
+ closed on:  17 Nov 2024, 00:41:01
+-------------------------------------------------------------------------------

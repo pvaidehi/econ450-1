@@ -26,7 +26,7 @@ df[!,:m] = raw_data."X44";
 df[!,:p] = raw_data."X45";
 df[!,:wm] = raw_data."X49";
 df[!,:ind7] = raw_data."X10";
-va_y = log(exp.(df[!, :y] .+ df[!, :p]) .- exp.(df[!, :m] .+ df[!, :wm]));
+va_y = (exp.(df[!, :y] .+ df[!, :p]) .- exp.(df[!, :m] .+ df[!, :wm]));
 va_y = ifelse.(va_y .< 0, missing, va_y);
 df[!, :va_y] = log.(va_y);
 m_share = df[!, :m] .+ df[!, :wm] - (df[!, :y] .+ df[!, :p]);
@@ -48,6 +48,10 @@ df_balanced = df[df.obs .== num_distinct_years, :]
 df_industry7_bal = filter(row -> row[:ind7] == 1, df_balanced);
 sort!(df_industry7_bal, [:id, :year]);
 
+# balanced panel in matrix form
+raw_balanced = raw_data[raw_data.obs .== num_distinct_years, :]
+vars_bal = [df_balanced.y, df_balanced.i, df_balanced.k, df_balanced.l, df_balanced.m];
+
 # computation globals
 init_params = [1.0,1.0];
 err_tol = 1e-6;
@@ -56,7 +60,7 @@ err_tol = 1e-6;
 generate_stats_and_tables(raw_data, vars, variable_names, "unbalanced")
 
 # part 2
-generate_stats_and_tables(raw_data, vars, variable_names, "balanced")
+generate_stats_and_tables(raw_balanced, vars_bal, variable_names, "balanced")
 
 # part 3
 run_std_models(df_industry7_bal, "-balanced")

@@ -1,0 +1,222 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{yhmath}
+\usepackage{amsthm}
+\usepackage{comment}
+\usepackage{amssymb,geometry,parskip}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{todonotes}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\geometry{tmargin=1in, bmargin=1in, lmargin=1in, rmargin = 1in}
+\newcommand{\gonzalo}[1]{{\color{blue} [GMK: {#1}]}}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{claim}{Claim}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usepackage{bbm}
+\usepackage{threeparttable}
+\usepackage{ragged2e}
+\usepackage{float}
+\usepackage{physics}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\indep}{\perp \!\!\! \perp}
+
+\newcommand{\conv}{\xrightarrow{\;\;\;}}
+
+\newcommand{\convp}{\xrightarrow{{\scriptscriptstyle \mathrm{\;p\;}}}}
+
+\newcommand{\convas}{\xrightarrow{{\scriptscriptstyle \mathrm{a.s.}}}}
+
+\newcommand{\convms}{\xrightarrow{{\scriptscriptstyle \mathrm{m.s.}}}}
+
+\newcommand{\convd}{\xrightarrow{{\scriptscriptstyle \mathrm{\;d\;}}}}
+
+\newcommand{\PP}{\mathbb{P}}
+
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\VV}{\mathbb{V}}
+
+\newcommand{\R}{\mathbb{R}}
+
+\newcommand{\defeq}{\vcentcolon=}
+
+\author{Vaidehi Parameswaran}
+\date{\today}
+
+\begin{document}
+
+
+\section{Identification of a Cobb-Douglas Production Function}
+\subsection*{(a)}
+We have by definition that
+\[y_t = f(k_t, l_t, m_t) + \omega_t + \epsilon_t\]
+and assume, as in GNR, that $k_t$ and $l_t$ are dynamic but $m_t$ is freely adjustable in each period, conditional on $\omega_t$. 
+
+Following GNR, we can write
+\begin{align*}
+    \mathbb{E}[y_t \mid \Gamma_t] & = \mathbb{E}[f(k_t, l_t, m_t)] + \mathbb{E}[\omega_t \mid \Gamma_t] + \mathbb{E}[\epsilon_t \mid \Gamma_t] \\
+                        & = \mathbb{E}[f(k_t, l_t, m_t)] + \mathbb{E}[\delta_0 + \delta_1 \omega_{t-1} + \eta_t \mid \Gamma_t] + \mathbb{E}[\epsilon_t \mid \Gamma_t] \\
+                        & = \mathbb{E}[f(k_t, l_t, m_t)] + \delta_0 + \delta_1 \mathbb{E}[\omega_{t-1} \mid \Gamma_t] \\
+                        & = \alpha_k k_t + \alpha_l l_t + \alpha_m \mathbb{E}[m_t \mid \Gamma_t] + \delta_0 + \delta_1 h(\phi(k_{t-1}, l_{t-1}, m_{t-1}) + d_{t-1} - f(k_{t-1}, l_{t-1}, m_{t-1})),
+\end{align*}
+where we have rewritten $\omega_t$ using its definition and use the fact that $\eta_t$ and $\epsilon_t$ are exogenous.
+
+\subsection*{(b)}
+The firm's problem with respect to materials is
+\[\max_{M_t} P_t \mathbb{E}[F(K_t, L_t, M_t) \exp(\omega_t + \epsilon_t) \mid \Gamma_t] - \rho_t M_t.\]
+The first order condition is given by
+\[P_t \pdv{M_t} F(K_t, L_t, M_t) \exp(\omega_t) \mathcal{E} = \rho_t.\]
+Rearranging, we have
+\[\alpha_m K_t^{\alpha_k} L_t^{\alpha_l} M_t^{\alpha_{m} - 1} = \frac{\rho_t}{P_t \mathcal{E}} \exp(-\omega_t).\]
+Taking logs,
+\begin{align*}
+    (\alpha_m - 1) m_t & = \log(\frac{\rho_t}{P_t \mathcal{E}}) - \omega_t - \alpha_k k_t - \alpha_l l_t - \log(\alpha_m) \\
+                       & = d_t - \omega_t - \alpha_k k_t - \alpha_l l_t - \log(\alpha_m).
+\end{align*} 
+Recall from above that
+\begin{align*}
+    \mathbb{E}[y_t \mid \Gamma_t] & = \alpha_k k_t + \alpha_l l_t + \alpha_m \mathbb{E}[m_t \mid \Gamma_t ] + \mathbb{E}[\omega_t \mid \Gamma_t] \\
+                    & = \alpha_k k_t + \alpha_l l_t + \frac{\alpha_m}{\alpha_m - 1} \mathbb{E}[d_t - \omega_t - \alpha_k k_t - \alpha_l l_t - \log(\alpha_m) \mid \Gamma_t] + \mathbb{E}[\omega_t \mid \Gamma_t] \\
+                    & = \left( 1 - \frac{\alpha_m}{\alpha_m - 1} \right)(\alpha_k k_t + \alpha_l l_t + \mathbb{E}[\omega_t \mid \Gamma_t]) + \frac{\alpha_m}{\alpha_m - 1} (d_t - \log(\alpha_m)) \\
+                    & = \frac{1}{1 - \alpha_m} (\alpha_k k_t + \alpha_l l_t + \mathbb{E}[\omega_t \mid \Gamma_t]) + \frac{\alpha_m}{\alpha_m - 1} (d_t - \log(\alpha_m)) \\
+                    & = \frac{1}{1 - \alpha_m} (\alpha_k k_t + \alpha_l l_t + h(\phi_{t-1} + d_{t-1} - f(k_{t-1}, l_{t-1}, m_{t-1})) + \frac{\alpha_m}{\alpha_m - 1} (d_t - \log(\alpha_m))
+\end{align*}
+
+\subsection*{(c)}
+Recall that
+\[\mathbb{E}[y_t \mid k_t, l_t, m_t] \equiv \phi(k_t, l_t, m_t) + d_t.\]
+By the FOC on materials,
+\[\mathbb{E}[y_t \mid k_t, l_t, m_t] = \mathbb{E}[\omega_t + f(k_t, l_t, m_t) \mid k_t, l_t, m_t] = \mathbb{E}[d_t + m_t - log(\alpha_m) \mid k_t, l_t, m_t]. \]
+Thus, 
+\[\phi_t = m_t - \log(\alpha_m).\]
+Plugging this into the previous expression,
+\[\mathbb{E}[y_t \mid \Gamma_t] = \frac{1}{1 - \alpha_m} \left[ \alpha_k k_t + \alpha_l l_t + \delta_0 + \delta_1 h(m_{t-1} - \log(\alpha_m) + d_{t-1} - f(k_{t-1}, l_{t-1}, m_{t-1}) \right]  + \frac{\alpha_m}{\alpha_m - 1} (d_t - \log(\alpha_m)).\]
+
+\subsection*{(d)}
+We assume that prices are fixed, so $d_t$ doesn't change. By the logic of GNR, the only variables that exogenously shifts $m_t$ is $\eta_t$, which is unobserved. Conditional on $\Gamma_t$, the expectation of $m_t$ is a constant. Because we have $\frac{1}{1 - \alpha_m}$ multiplying the other factor coefficients, these also cannot be identified. 
+
+\subsection*{(e)}
+We can use the firm's materials FOC to write
+\[\mathbb{E}[Y_t / M_t \mid \Gamma_t] \alpha_m = \rho / P \implies \alpha_m = \frac{\rho}{P} \cdot \frac{1}{ \mathbb{E}\left[ \frac{Y_t}{M_t} \mid \Gamma_t\right] } .\]
+So we can identify $\alpha_m$, since the right-hand side is just data. From this, we can identify the other factor coefficients, e.g. by the procedure in (d). Finally, we can back out $\hat{\omega}_t$ for each observation, and run an autogregression of $\hat{\omega}_t$ on $\hat{\omega}_{t-1}$. This will identify $\delta_0$ and $\delta_1$. 
+
+\section{Estimation of Production Functions}
+
+\subsection*{(a) Summary Statistics}
+
+I haven't used Julia in the past to produce latex tables so forgive the somewhat shabby formatting of the tables. 
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{4pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/summary_stats_table_unbalanced.tex}
+    \caption{Summary Statistics - Unbalanced Panel}
+    \label{tab:summary_statistics1}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{2pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/ind_year_counts_unbalanced.tex}
+    \caption{Industry Year Counts - Unbalanced Panel}
+    \label{tab:ind_year1}
+\end{table}
+
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{1pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/zeroes_by_year_unbalanced.tex}
+    \caption{Zero Counts - Unbalanced Panel}
+    \label{tab:zeros1}
+\end{table}
+
+Investment has the highest variance in the data. 
+There are no firms with zero labour or zero materials used. 
+There seems to be significant entry and exit across industries and years. 
+
+\subsection*{(b) Summary Statistics - Balanced Panel}
+
+The count of observations is 2,470 and lower as expected given entry and exit. 
+Means of relevant variables are higher implying that there is selection into the balanced panel, i.e. larger or ``better'' firms are more likely to stay in the sample throughout.
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{4pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/summary_stats_table_balanced.tex}
+    \caption{Summary Statistics - Balanced Panel}
+    \label{tab:summary_statistics2}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{2pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/ind_year_counts_balanced.tex}
+    \caption{Industry Year Counts - Balanced Panel}
+    \label{tab:ind_year2}
+\end{table}
+
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{1pt} % Adjust column spacing
+\renewcommand{\arraystretch}{1.2}
+    \input{outputs/zeroes_by_year_balanced.tex}
+    \caption{Zero Counts - Balanced Panel}
+    \label{tab:zeros2}
+\end{table}
+
+\clearpage
+\subsection*{(c) Standard Regression Models - Balanced Panel}
+
+I execute the standard models in julia. 
+I am going to skip printing output in tables for this one because I don't have much experience printing these out of julia. 
+But the Jupyter notebook prints the output. 
+
+I choose industry no. 7.
+From these models, we can learn that
+the coefficient on materials is high consistently across models, implying a high elasticity of output with respect to materials.
+Can't interpret the coefficients too well, the sign on capital seems to change. Negative coefficient on capital does not make sense to me.
+
+\subsection*{(d) Standard Regression Models - Unbalanced Panel}
+
+Using the balanced panel, the coefficient on materials is now lower. 
+The coefficient on labour is larger now. 
+Thus the balanced panel likely has firms with large material usage and smaller labour usage in otuput. 
+
+\clearpage
+\subsection*{(e) Estimation in Stata}
+
+I did the parts with a Stata command in Stata. 
+I didn't want to spend time figuring out how to do them in Julia. 
+I attempted to code up OP myself but gave up midway for the sake of time. 
+
+\begin{table}[ht]
+    \centering
+    \small
+    \setlength{\tabcolsep}{2pt}
+    \input{outputs/prod_est.tex}
+    \caption{Production Function Estimates}
+    \label{tab:prod_est}
+\end{table}
+
+\subsection*{(e) ACF}
+The coefficients I get are $\beta_k = 0.25$ and $\beta_l = 0.82$. 
+I think covergence is failing and I can't successfully debug. 
+But both grid-search and Nelder-Mead yield similar coefficients. 
+And these estimates make sense in comparison to the estimates in ACF (2015). 
+I bootstrap to get standard errors. 
+
+\subsection*{(e) GNR}
+I did first stage and gave up. Sorry!
+
+\end{document}
