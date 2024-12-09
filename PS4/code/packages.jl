@@ -1,5 +1,4 @@
-# purpose: Set up the environment for the project
-
+# purpose: set up the environment for the project
 # load necessary package manager
 using Pkg
 
@@ -11,15 +10,15 @@ packages = [
 ]
 
 # function to ensure all required packages are installed
-function ensure_packages(packages)
-    for pkg in packages
-        if !haskey(Pkg.dependencies(), pkg)
-            println("Installing package: $pkg")
-            Pkg.add(pkg)
-        end
-    end
-end
+# function ensure_packages(packages)
+#     for pkg in packages
+#         if !haskey(Pkg.dependencies(), pkg)
+#             println("Installing package: $pkg")
+#             Pkg.add(pkg)
+#         end
+#     end
+# end
 
-ensure_packages(packages)
-using Random, MAT, Plots, Distributions, LinearAlgebra
+# ensure_packages(packages)
+using Random, MAT, Plots, Distributions, LinearAlgebra, Ipopt, JuMP, ForwardDiff
 Random.seed!(1234)

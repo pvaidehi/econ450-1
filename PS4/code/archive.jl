@@ -1,28 +1,3 @@
-ν = rand(d, 100)
-W = Matrix{Float64}(I, 6, 6) #weighting matrix
-
-σ_init_vals = 0.0
-β_init_vals = [0.0, 0.0, 0.0]
-η_init_vals = zeros(6)
-α_init_vals = 0.0
-δ_init_vals = zeros(300)
-
-σ_init_vals = 0.6
-β_init_vals = [0.2, 0.3, 0.65]
-η_init_vals = zeros(6)
-α_init_vals = 0.3
-δ_init_vals = reshape(rand(300), 3, 100)
-
-
-lo_X2_jm = repeat(sum(X2_jm, dims = 1), inner=(size(X2_jm, 1), 1)).- X2_jm
-lo_X3_jm = repeat(sum(X3_jm, dims = 1), inner=(size(X3_jm, 1), 1)) .- X3_jm
-
-W_vector = W_j .* ones(3,100)
-
-X = hcat(X1_jm, X2_jm, X3_jm, P_opt)
-Z = (X1_jm, X2_jm, X3_jm, lo_X2_jm, lo_X3_jm, W_vector)
-
-ν_vec = reshape(ν, 1, 1, 100)
 
 # moment function 
 function blp_moments(β1, β2, β3, δ, α, η, σ)
@@ -150,3 +125,12 @@ end
 register(model, :.==, 2, .==, autodiff=true)
 
 register(model, :blp_moments_wrapped, 4, blp_moments_wrapped; autodiff = true)
+
+
+# jacobians 
+function compute_jac_shares(β, α, σ, δ, η)
+    jac_share_δ = Zygote.jacobian(δ -> share_calc(β, α, σ, δ, η), δ)
+    jac_share_σ = Zygote.jacobian(σ -> share_calc(β, α, σ, δ, η), σ)
+    return jac_share_δ, jac_share_σ
+end
+jacobian_δ, jacobian_σ = compute_jac_shares(δ_solution, α_solution, σ_solution)

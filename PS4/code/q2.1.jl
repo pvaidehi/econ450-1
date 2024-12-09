@@ -1,10 +1,11 @@
-# purpose: question 2 
+# purpose: question 2.1 
 # author: vaidehi
 
+# import data for 3 products
+filename = "../data/100markets3products.mat"
+include("import_data.jl")
+
 # 2.1 
-n_products = size(ξ_jm, 1)
-n_markets = size(ξ_jm, 2)
-total_dim = n_products * n_markets
 E_ξ_X1 = sum(ξ_jm .* X1_jm)/total_dim
 E_ξ_X2 = sum(ξ_jm .* X2_jm)/total_dim
 E_ξ_X3 = sum(ξ_jm .* X3_jm)/total_dim
